@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Market</title>
-    <script src="./index.js"></script>
+    <script src="./index.js" defer></script>
     <style>
       table,
       th,
@@ -31,7 +31,7 @@
       <form>
         <p>
           <label for="filter--name">Name</label>
-          <input type="text" id="filter--name" />
+          <input type="text" id="filter--name" oninput="fnFilterData()" />
         </p>
         <p>
           <label for="filter--price_range-start">Price</label>
@@ -48,7 +48,12 @@
             <option value="Fruit">Fruit</option>
           </select>
         </p>
-        <input type="button" value="Reset" id="filter--button" />
+        <input
+          type="button"
+          value="Reset"
+          id="filter--button"
+          onclick="filterData()"
+        />
       </form>
     </fieldset>
 
@@ -93,7 +98,7 @@
         type="button"
         value="Input"
         id="input--button"
-        onclick="inputData()"
+        onclick="fnInputData()"
       />
     </fieldset>
 
@@ -101,20 +106,15 @@
     <fieldset>
       <legend>Table Data</legend>
       <table id="table-data">
-        <tr>
-          <th>ID</th>
-          <th>Category</th>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Stock</th>
-        </tr>
-        <tr>
-          <td>123456789</td>
-          <td>Cloth</td>
-          <td>Yellow Shirt</td>
-          <td>$38</td>
-          <td>12</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+        <tbody id="table_data--body"></tbody>
       </table>
     </fieldset>
   </body>
