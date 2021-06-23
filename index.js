@@ -1,24 +1,72 @@
 //PRODUCT LIST
 let products = [
-  { name: "Yellow shirt", price: 28, category: "Cloth", stock: 18 },
-  { name: "Mango", price: 6.5, category: "Fruit", stock: 15 },
-  { name: "Pink Sweater", price: 52, category: "Cloth", stock: 24 },
-  { name: "iPhone 11 64GB", price: 999, category: "Electronic", stock: 6 },
-  { name: "Sausage", price: 11, category: "Fast Food", stock: 12 },
+  {
+    id: 1623345592011,
+    name: "Yellow shirt",
+    price: 28,
+    category: "Cloth",
+    stock: 18,
+  },
+  {
+    id: 1623345592032,
+    name: "Mango",
+    price: 6.5,
+    category: "Fruit",
+    stock: 15,
+  },
+  {
+    id: 1623345592039,
+    name: "Pink Sweater",
+    price: 52,
+    category: "Cloth",
+    stock: 24,
+  },
+  {
+    id: 1623345592064,
+    name: "iPhone 11 64GB",
+    price: 999,
+    category: "Electronic",
+    stock: 6,
+  },
+  {
+    id: 1623345592075,
+    name: "Sausage",
+    price: 11,
+    category: "Fast Food",
+    stock: 12,
+  },
 ];
 
 //RENDERING LIST
-let fnRender = (ar) => {
-  const productList = ar.map((product) => {
-    let { name, price, category, stock } = product;
-    return `
-    <tr>
-      <td> ${category} </td>
-      <td> ${name} </td>
-      <td> $${price} </td>
-      <td> ${stock} </td>
-    </tr>
+let fnRender = (index) => {
+  const productList = products.map((product) => {
+    let { id, name, price, category, stock } = product;
+
+    if (id != index) {
+      return `
+      <tr>
+        <td> ${id} </td>
+        <td> ${category} </td>
+        <td> ${name} </td>
+        <td> $${price} </td>
+        <td> ${stock} </td>
+        <td> <button onclick="fnEditData(${id})">Edit</button"> </td>
+        <td> <button onclick="fnDeleteData(${id})">Delete</button> </td>
+      </tr>
     `;
+    } else {
+      return `
+      <tr>
+        <td> ${id} </td>
+        <td> ${category} </td>
+        <td> <input type="text" value="${name}"> </td>
+        <td> <input type="text" value="${price}"> </td>
+        <td> <input type="text" value="${stock}"> </td>
+        <td> <button onclick="fnEditData(${id})">Edit</button"> </td>
+        <td> <button onclick="fnDeleteData(${id})">Delete</button> </td>
+      </tr>
+    `;
+    }
   });
 
   document.querySelector("#table_data--body").innerHTML = productList.join("");
@@ -34,11 +82,13 @@ const fnInputData = () => {
   const inputInputField = document.querySelectorAll(".input--input_field");
   const tableData = document.querySelector("#table-data");
 
+  const time = new Date();
+  const id = time.getTime();
   //Inserting to Products array
-  products.push({ name, price, category, stock });
+  products.push({ id, name, price, category, stock });
 
   //Update Table Data
-  fnRender(products);
+  fnRender();
 
   // Clear input field after submitting
   inputInputField.forEach((input) => {
@@ -46,7 +96,27 @@ const fnInputData = () => {
   });
 };
 
-fnRender(products);
+fnRender();
+
+//RENDERING FILTER LIST
+let fnRenderFilter = (ar) => {
+  const productList = ar.map((product) => {
+    let { id, name, price, category, stock } = product;
+    return `
+    <tr id="${id}">
+      <td> ${id} </td>
+      <td> ${category} </td>
+      <td id="name-${id}"> ${name} </td>
+      <td> $${price} </td>
+      <td> ${stock} </td>
+      <td class="edit-btn"> <button onclick="fnEditData(${id})">Edit</button"> </td>
+      <td> <button onclick="fnDeleteData(${id})">Delete</button> </td>
+    </tr>
+    `;
+  });
+
+  document.querySelector("#table_data--body").innerHTML = productList.join("");
+};
 
 //FILTER DATA NAME
 const fnFilterData = () => {
@@ -59,7 +129,7 @@ const fnFilterData = () => {
     return nameLow.includes(keywordNameLow);
   });
 
-  fnRender(filterProducts);
+  fnRenderFilter(filterProducts);
 };
 
 //FILTER DATA PRICE RANGE
@@ -77,21 +147,21 @@ const fnFilterPrice = () => {
     });
   }
 
-  fnRender(filterProducts);
+  fnRenderFilter(filterProducts);
 };
 
 //FILTER DATA PRICE RANGE
 const fnFilterCategory = () => {
   const filterCategory = document.querySelector("#filter--category").value;
 
-  if (filterCategory === "All") {
-    fnRender(products);
+  if (filterCategory == "") {
+    fnRender();
   } else {
     let filterProducts = products.filter((product) => {
       return product.category == filterCategory;
     });
 
-    fnRender(filterProducts);
+    fnRenderFilter(filterProducts);
   }
 };
 
@@ -102,5 +172,21 @@ const fnResetFilter = () => {
   document.querySelector("#filter--price_max").value = "";
   document.querySelector("#filter--category").value = "";
 
-  fnRender(products);
+  fnRender();
+};
+
+//EDIT AND DELETE DATA
+const fnDeleteData = (id) => {
+  console.log(id);
+  products = products.filter((product) => {
+    return product.id != id;
+  });
+
+  console.log(products);
+
+  fnRender();
+};
+
+const fnEditData = (id) => {
+  fnRender(id);
 };
