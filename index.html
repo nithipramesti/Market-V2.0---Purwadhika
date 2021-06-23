@@ -35,13 +35,28 @@
         </p>
         <p>
           <label for="filter--price_range-start">Price</label>
-          <input type="number" id="filter--price_range-start" />
+          <input
+            type="number"
+            id="filter--price_min"
+            placeholder="Min"
+            onkeyup="fnFilterPrice()"
+          />
           -
-          <input type="number" id="filter--price_range-end" />
+          <input
+            type="number"
+            id="filter--price_max"
+            placeholder="Max"
+            onkeyup="fnFilterPrice()"
+          />
         </p>
         <p>
           <label for="filter--category">Category</label>
-          <select name="category" id="filter--category">
+          <select
+            name="category"
+            id="filter--category"
+            onchange="fnFilterCategory()"
+          >
+            <option value="">All</option>
             <option value="Fast Food">Fast Food</option>
             <option value="Cloth">Cloth</option>
             <option value="Electronic">Electronic</option>
@@ -52,7 +67,7 @@
           type="button"
           value="Reset"
           id="filter--button"
-          onclick="filterData()"
+          onclick="fnResetFilter()"
         />
       </form>
     </fieldset>

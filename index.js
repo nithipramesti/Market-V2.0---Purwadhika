@@ -8,8 +8,8 @@ let products = [
 ];
 
 //RENDERING LIST
-let fnRender = () => {
-  const productList = products.map((product) => {
+let fnRender = (ar) => {
+  const productList = ar.map((product) => {
     let { name, price, category, stock } = product;
     return `
     <tr>
@@ -38,7 +38,7 @@ const fnInputData = () => {
   products.push({ name, price, category, stock });
 
   //Update Table Data
-  fnRender();
+  fnRender(products);
 
   // Clear input field after submitting
   inputInputField.forEach((input) => {
@@ -46,10 +46,61 @@ const fnInputData = () => {
   });
 };
 
-fnRender();
+fnRender(products);
 
-//FILTER DATA
+//FILTER DATA NAME
 const fnFilterData = () => {
-  const filterName = document.querySelector("#filter--name");
-  console.log(filterName.value);
+  const keywordName = document.querySelector("#filter--name");
+
+  let filterProducts = products.filter((product) => {
+    const nameLow = product.name.toLowerCase();
+    const keywordNameLow = keywordName.value.toLowerCase();
+
+    return nameLow.includes(keywordNameLow);
+  });
+
+  fnRender(filterProducts);
+};
+
+//FILTER DATA PRICE RANGE
+const fnFilterPrice = () => {
+  const minPrice = document.querySelector("#filter--price_min").value;
+  const maxPrice = document.querySelector("#filter--price_max").value;
+
+  let filterProducts = products;
+
+  if (!(minPrice == "" || maxPrice == "")) {
+    filterProducts = products.filter((product) => {
+      return (
+        Number(product.price) >= minPrice && Number(product.price) <= maxPrice
+      );
+    });
+  }
+
+  fnRender(filterProducts);
+};
+
+//FILTER DATA PRICE RANGE
+const fnFilterCategory = () => {
+  const filterCategory = document.querySelector("#filter--category").value;
+
+  if (filterCategory === "All") {
+    fnRender(products);
+  } else {
+    let filterProducts = products.filter((product) => {
+      return product.category == filterCategory;
+    });
+
+    fnRender(filterProducts);
+  }
+};
+
+//FILTER RESET BUTTON
+const fnResetFilter = () => {
+  document.querySelector("#filter--name").value = "";
+  document.querySelector("#filter--price_min").value = "";
+  document.querySelector("#filter--price_max").value = "";
+  document.querySelector("#filter--category").value = "";
+
+  fnRender(products);
 };
