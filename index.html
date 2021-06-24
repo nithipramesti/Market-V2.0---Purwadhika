@@ -128,11 +128,38 @@
             <th>Name</th>
             <th>Price</th>
             <th>Stock</th>
+            <th>Cart</th>
             <th colspan="2">Action</th>
           </tr>
         </thead>
         <tbody id="table_data--body"></tbody>
       </table>
+    </fieldset>
+
+    <!-- CART -->
+    <fieldset>
+      <legend>Cart</legend>
+      <table id="cart">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th colspan="2">Action</th>
+          </tr>
+        </thead>
+        <tbody id="cart--body"></tbody>
+      </table>
+      <button onclick="fnCheckout()">Checkout</button>
+    </fieldset>
+
+    <!-- PAYMENT -->
+    <fieldset>
+      <legend>Payment</legend>
+      <h2>Transaction Detail</h2>
+      <p id="transaction_detail"></p>
     </fieldset>
   </body>
 </html>

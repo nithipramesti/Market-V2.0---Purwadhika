@@ -50,6 +50,7 @@ let fnRender = (index) => {
         <td> ${name} </td>
         <td> $${price} </td>
         <td> ${stock} </td>
+        <td> <button onclick="fnAddToCart(${id})">Add</button"> </td>
         <td> <button onclick="fnEditData(${id})">Edit</button"> </td>
         <td> <button onclick="fnDeleteData(${id})">Delete</button> </td>
       </tr>
@@ -59,11 +60,12 @@ let fnRender = (index) => {
       <tr>
         <td> ${id} </td>
         <td> ${category} </td>
-        <td> <input type="text" value="${name}"> </td>
-        <td> <input type="text" value="${price}"> </td>
-        <td> <input type="text" value="${stock}"> </td>
-        <td> <button onclick="fnEditData(${id})">Edit</button"> </td>
-        <td> <button onclick="fnDeleteData(${id})">Delete</button> </td>
+        <td> <input type="text" id="edit--name" value="${name}"> </td>
+        <td> <input type="text" id="edit--price" value="${price}"> </td>
+        <td> <input type="text" id="edit--stock" value="${stock}"> </td>
+        <td> <button onclick="fnAddToCart(${id})">Add</button"> </td>
+        <td> <button onclick="fnSaveChanges(${id})">Save</button"> </td>
+        <td> <button onclick="fnCancelChanges()">Cancel</button> </td>
       </tr>
     `;
     }
@@ -109,6 +111,7 @@ let fnRenderFilter = (ar) => {
       <td id="name-${id}"> ${name} </td>
       <td> $${price} </td>
       <td> ${stock} </td>
+      <td> <button onclick="fnAddToCart(${id})">Add</button"> </td>
       <td class="edit-btn"> <button onclick="fnEditData(${id})">Edit</button"> </td>
       <td> <button onclick="fnDeleteData(${id})">Delete</button> </td>
     </tr>
@@ -175,18 +178,136 @@ const fnResetFilter = () => {
   fnRender();
 };
 
-//EDIT AND DELETE DATA
+//DELETE DATA
 const fnDeleteData = (id) => {
-  console.log(id);
   products = products.filter((product) => {
     return product.id != id;
   });
 
-  console.log(products);
+  fnRender();
+};
+
+//EDIT DATA
+const fnEditData = (id) => {
+  fnRender(id);
+};
+
+//SAVE CHANGES
+const fnSaveChanges = (id) => {
+  const editName = document.querySelector("#edit--name");
+  const editPrice = document.querySelector("#edit--price");
+  const editStock = document.querySelector("#edit--stock");
+
+  products.forEach((product) => {
+    if (product.id == id) {
+      product.name = editName.value;
+      product.price = editPrice.value;
+      product.stock = editStock.value;
+    }
+  });
 
   fnRender();
 };
 
-const fnEditData = (id) => {
-  fnRender(id);
+//CANCEL CHANGES
+const fnCancelChanges = () => {
+  fnRender();
+};
+
+//CART ARRAY
+let cart = [];
+
+//RENDERING CART LIST
+let fnRenderCart = (ar) => {
+  const productList = ar.map((product) => {
+    let { id, name, price, category, qty } = product;
+    return `
+    <tr id="${id}">
+      <td> ${id} </td>
+      <td> ${category} </td>
+      <td id="name-${id}"> ${name} </td>
+      <td> $${price} </td>
+      <td> ${qty} </td>
+      <td> <button onclick="fnDeleteCart(${id})">Delete</button> </td>
+    </tr>
+    `;
+  });
+
+  document.querySelector("#cart--body").innerHTML = productList.join("");
+};
+
+//ADD TO CART
+const fnAddToCart = (id) => {
+  let newCart = true;
+  products.forEach((product) => {
+    if (product.id == id) {
+      cart.forEach((cartProduct) => {
+        if (product.id == cartProduct.id) {
+          newCart = false;
+
+          if (product.stock > 0) {
+            cartProduct.qty++;
+            product.stock--;
+            fnRender();
+          } else {
+            alert(`The stock is ${cartProduct.stock}!`);
+          }
+        }
+      });
+
+      if (newCart == true) {
+        cart.push({ ...product, qty: 1 });
+        product.stock--;
+        fnRender();
+      }
+    }
+  });
+
+  fnRenderCart(cart);
+};
+
+//DELETE PRODUCT IN CART
+const fnDeleteCart = (id) => {
+  //restore product stock
+  products.forEach((product) => {
+    if (product.id == id) {
+      cart.forEach((cartProduct) => {
+        if (cartProduct.id == id) {
+          product.stock += cartProduct.qty;
+        }
+      });
+    }
+  });
+
+  //delete product from cart
+  cart = cart.filter((cartProduct) => {
+    return cartProduct.id != id;
+  });
+
+  fnRenderCart(cart);
+  fnRender();
+};
+
+//CHECKOUT
+const fnCheckout = () => {
+  const transactionaDetail = document.querySelector("#transaction_detail");
+
+  const cartList = cart.map((product) => {
+    let { name, price, category, qty } = product;
+    return `
+    [${category}] ${name} | $${price} x ${qty} = $${price * qty} <br>
+    `;
+  });
+
+  let total = 0;
+  cart.forEach((product) => {
+    total += product.price * product.qty;
+  });
+  let tax = total * 0.1;
+
+  transactionaDetail.innerHTML = `${cartList.join("")}<br>
+  <b>Sub Total: $${total}</b> <br>
+  <b>Tax: $${tax}</b> <br>
+  <b>Sub Total: $${total + tax}</b> 
+  `;
 };
