@@ -137,18 +137,32 @@ const fnFilterData = () => {
 
 //FILTER DATA PRICE RANGE
 const fnFilterPrice = () => {
-  const minPrice = document.querySelector("#filter--price_min").value;
-  const maxPrice = document.querySelector("#filter--price_max").value;
+  let minPrice = document.querySelector("#filter--price_min").value;
+  let maxPrice = document.querySelector("#filter--price_max").value;
 
   let filterProducts = products;
 
-  if (!(minPrice == "" || maxPrice == "")) {
-    filterProducts = products.filter((product) => {
-      return (
-        Number(product.price) >= minPrice && Number(product.price) <= maxPrice
-      );
-    });
+  // if (!(minPrice == "" || maxPrice == "")) {
+  //   filterProducts = products.filter((product) => {
+  //     return (
+  //       Number(product.price) >= minPrice && Number(product.price) <= maxPrice
+  //     );
+  //   });
+  // }
+
+  if (minPrice == "") {
+    minPrice = 0;
   }
+
+  if (maxPrice == "") {
+    maxPrice = 10000000000;
+  }
+
+  filterProducts = products.filter((product) => {
+    return (
+      Number(product.price) >= minPrice && Number(product.price) <= maxPrice
+    );
+  });
 
   fnRenderFilter(filterProducts);
 };
